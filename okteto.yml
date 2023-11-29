@@ -4,9 +4,8 @@ build:
 
 
 deploy:
-  - helm upgrade --install contacts-service chart
-    --set contacts.image=${OKTETO_BUILD_CONTACTS_SERVICE_IMAGE}
-
+  - helm upgrade --install eventhub-assistants chart
+    --set assistants.image=${OKTETO_BUILD_EVENTHUB-ASSISTANTS_IMAGE}
 dev:
   eventhub-assistants:
     command: npm start
