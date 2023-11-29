@@ -1,0 +1,13 @@
+build:
+  eventhub-assistants:
+    context: .
+
+
+deploy:
+  - helm updrage --install eventhub-assistants chart --set image.repository=${OKTETO_BUILD_EVENTHUB-ASSISTANTS_IMAGE}
+
+dev:
+  eventhub-assistants:
+    command: npm start
+    sync:
+      - .:/app

@@ -5,12 +5,9 @@ var assistans = [
   {
   "name": "Jorge", 
   "lastName": "Sillero", 
-  "age": "22", 
-  "sex": "male", 
   "email":"jorgesilleromanchon@gmail.com", 
-  "phone": "657236154", 
-  "addres":"Calle San Gil"
-}
+  "eventId": "1"
+  }
 ]
 
 /* GET assistants listing. */
@@ -37,5 +34,8 @@ router.get('/:name', function(req, res, next) {
     res.sendStatus(404);
   }
 });
+
+
+
 
 module.exports = router;
