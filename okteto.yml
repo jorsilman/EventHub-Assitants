@@ -5,7 +5,8 @@ build:
 
 deploy:
   - helm upgrade --install eventhub-assistants chart
-    --set image.repository=${OKTETO_BUILD_EVENTHUB-ASSISTANTS_IMAGE}
+    --set assistants.image=${OKTETO_BUILD_EVENTHUB_ASSISTANTS_IMAGE}
+
 dev:
   eventhub-assistants:
     command: npm start
