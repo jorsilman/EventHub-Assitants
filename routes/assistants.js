@@ -25,19 +25,54 @@ router.post('/', function(req, res, next) {
   lastName = assistant.lastName;
   email = assistant.email;
   eventId = assistant.eventId;
-  /*Generate random alphanumeric code*/
-  var code = Math.random().toString(36).substring(7);
-  /*JSON with the info of the assistant*/
-  var jsonAssistant = {
-    "name": name,
-    "lastName": lastName,
-    "email": email,
-    "eventId": eventId,
-    "code": code
-  };
-  console.log(jsonAssistant);
 
+  /* Crear una promesa para la llamada a random.org */
+  var getRandomCode = new Promise(function(resolve, reject) {
+    var request = require('request');
+    var url = 'https://api.random.org/json-rpc/4/invoke';
+    var options = {
+      uri: url,
+      method: 'POST',
+      json: {
+        "jsonrpc": "2.0",
+        "method": "generateStrings",
+        "params": {
+          "apiKey": "52ebd838-f349-49d6-98bf-5d28623752d3",
+          "n": 1,
+          "length": 5,
+          "characters": "abcdefghijklmnopqrstuvwxyz0123456789"
+        },
+        "id": 1
+      }
+    };
+
+    request(options, function(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var code = body.result.random.data;
+        console.log(code);
+        resolve(code); // Resuelve la promesa con el código
+      } else {
+        reject(error); // Rechaza la promesa con el error
+      }
+    });
+  });
+
+  /* Utilizar la promesa para obtener el código y construir el objeto jsonAssistant */
+  getRandomCode.then(function(code) {
+    var jsonAssistant = {
+      "name": name,
+      "lastName": lastName,
+      "email": email,
+      "eventId": eventId,
+      "code": code
+    };
+    console.log(jsonAssistant);
+  }).catch(function(error) {
+    console.error("Error al obtener el código:", error);
+  });
 });
+
+
 
 /*GET assistant Id*/
 router.get('/:id', function(req, res, next) {
@@ -88,7 +123,7 @@ router.delete('/:id', function(req, res, next) {
   }
 });
 
-/*GET assistant by eventId*/
+/*GET assistants by eventId*/
 router.get('/event/:eventId', function(req, res, next) {
   var eventId = req.params.eventId;
   var result = assistans.filter(c => {
@@ -100,7 +135,6 @@ router.get('/event/:eventId', function(req, res, next) {
     res.sendStatus(404);
   }
 });
-
 
 
 
