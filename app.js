@@ -17,4 +17,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api/v1/assistants', assistantsRouter);
 
+// setup connection to mongo
+const mongoose = require('mongoose');
+
+const DB_URL = "mongodb+srv://trabajoFIS:FIS2324@assistants-service.gonxlob.mongodb.net/"
+console.log("Connecting: %s", DB_URL);
+mongoose.connect(DB_URL);
+const db = mongoose.connection;
+
+// recover from errors
+db.on('error', console.error.bind(console, 'db connection error'));
+
 module.exports = app;
