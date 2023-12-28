@@ -1,11 +1,12 @@
 var express = require('express');
 const Assistant = require('../models/assistant');
 var router = express.Router();
+const axios = require('axios');
 
 
 var debug = require('debug')('contacts-2:server');
 
-/* GET assistants listing. */
+/* GET assistants listing. FUNCIONA*/
 router.get('/', async function(req, res, next) {
   try {
     const result = await Assistant.find();
@@ -41,62 +42,29 @@ router.post('/', async function(req, res, next) {
       }
     };
 
-    request(options, function(error, response, body) {
-      console.log("SIIIIIIIIII");
 
-      if (!error && response.statusCode == 200) {
-        const code = body.result.random.data;
-        console.log(code);
-        resolve(code); // Resuelve la promesa con el código
-      } else {
-        reject(error); // Rechaza la promesa con el error
-      }
-    });
-  });
+*/
+
+
+
+/* POST assistants FUNCIONA*/
+router.post('/', async function(req, res, next) {
+  const { name, surname, email, eventId, username } = req.body;
+
+   /*code es un string de 5 caracteres alfanuméricos aleatorios*/
+  const code = Math.random().toString(36).substring(2, 7);
+
 
   try {
-    // Ejecutar la promesa y esperar la respuesta antes de continuar
-    const code = await getRandomCode;
-
     // Crear una instancia del modelo Assistant con los datos proporcionados
     const assistant = new Assistant({
       name,
       surname,
       email,
       eventId,
+      username,
       code
     });
-    
-
-    // Guardar la instancia del modelo en la base de datos
-    await assistant.save();
-    // Enviar respuesta exitosa al cliente
-    res.sendStatus(201);
-  } catch(e) {
-    if (e.errors) {
-      debug("Validation problem when saving");
-      res.status(400).send({error: e.message});
-    } else {
-      debug("DB problem", e);
-      res.sendStatus(500);
-    }
-  }
-});
-
-*/
-
-/* POST assistants */
-router.post('/', async function(req, res, next) {
-  const { name, surname, email, eventId } = req.body;
-
-  try {
-    // Crear una instancia del modelo Assistant con los datos proporcionados
-    const assistant = new Assistant({
-      name,
-      surname,
-      email,
-      eventId
-    });
 
     // Guardar la instancia del modelo en la base de datos
     await assistant.save();
@@ -115,7 +83,7 @@ router.post('/', async function(req, res, next) {
 
 
 
-/* GET assistant by Id */
+/* GET assistant by Id FUNCIONA*/
 router.get('/:id', async function(req, res, next) {
   const id = req.params.id;
 
@@ -138,7 +106,7 @@ router.get('/:id', async function(req, res, next) {
   }
 });
 
-/* PUT assistant by Id */
+/* PUT assistant by Id FUNCIONA*/
 router.put('/:id', async function(req, res, next) {
   const id = req.params.id;
   const updatedAssistant = req.body;
@@ -154,6 +122,7 @@ router.put('/:id', async function(req, res, next) {
       result.surname = updatedAssistant.surname;
       result.email = updatedAssistant.email;
       result.eventId = updatedAssistant.eventId;
+      result.username = updatedAssistant.username;
 
       // Guardar los cambios en la base de datos
       await result.save();
@@ -171,13 +140,14 @@ router.put('/:id', async function(req, res, next) {
   }
 });
 
-/* DELETE assistant by Id */
+/* DELETE assistant by Id FUNCIONA*/
 router.delete('/:id', async function(req, res, next) {
   const id = req.params.id;
   console.log(id);
 
   try {
-    const result = await Assistant.findByIdAndRemove(id);
+    const result = await Assistant.findOneAndDelete({ _id: id });
+    console.log(result);
     if (result) {
       console.log("CASI ELIMINADO");
       res.sendStatus(204);
@@ -185,13 +155,14 @@ router.delete('/:id', async function(req, res, next) {
       res.sendStatus(404);
     }
   } catch (e) {
+    console.log("ERROR");
     // Manejar cualquier error que ocurra durante la eliminación
     debug("DB problem", e);
     res.sendStatus(500);
   }
 });
 
-/*GET assistants by eventId*/
+/*GET assistants by eventId FUNCIONA*/
 router.get('/event/:eventId', async function(req, res, next) {
   try {
     const eventId = req.params.eventId;
@@ -213,4 +184,49 @@ router.get('/event/:eventId', async function(req, res, next) {
   }
 });
 
+/* GET assistant by email FUNCIONA*/
+router.get('/email/:email', async function(req, res, next) {
+  const email = req.params.email;
+
+  try {
+    // Buscar el asistente en la base de datos por su email
+    const result = await Assistant.findOne({ email });
+
+    // Verificar si se encontró el asistente
+    if (result) {
+      // Enviar el asistente como respuesta al cliente
+      res.send(result);
+    } else {
+      // Enviar un código de estado 404 si el asistente no se encuentra
+      res.sendStatus(404);
+    }
+  } catch (e) {
+    // Manejar cualquier error que ocurra durante la búsqueda
+    debug("DB problem", e);
+    res.sendStatus(500);
+  }
+});
+
+
+
+/* DELETE all assistants FUNCIONA*/
+router.delete('/', async function(req, res, next) {
+  try {
+    // Eliminar todos los asistentes de la base de datos
+    await Assistant.deleteMany();
+
+    // Enviar respuesta exitosa al cliente
+    res.sendStatus(200);
+  } catch (error) {
+    // Manejar errores de manera adecuada
+    console.error('Error al eliminar todos los asistentes:', error);
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
+
+
+
+module.exports = router;
+

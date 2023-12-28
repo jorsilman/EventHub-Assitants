@@ -11,11 +11,22 @@ const assistantSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
     eventId: {
         type: String,
         required: true
+    },
+    username: {
+        type: String,
+        required: true,
+        unique:true
+    },
+    code: {
+        type: String,
+        required: true,
+        unique:true
     }
 });
 
@@ -24,7 +35,10 @@ assistantSchema.methods.cleanup = function() {
         name: this.name,
         surname: this.surname,
         email: this.email,
-        eventId: this.eventId
+        eventId: this.eventId,
+        username: this.username,
+        code: this.code,
+        _id: this._id
     }
 }
 
