@@ -12,7 +12,7 @@ const assistantSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique:true
+        unique:false
     },
     eventId: {
         type: String,
@@ -21,12 +21,12 @@ const assistantSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        unique:true
+        unique:false
     },
     code: {
         type: String,
         required: true,
-        unique:true
+        unique:false
     }
 });
 
