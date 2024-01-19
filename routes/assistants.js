@@ -139,23 +139,55 @@ router.put('/:id', async function(req, res, next) {
     res.sendStatus(500);
   }
 });
+// PUT assistant by Name
+router.put('/name/:name', async function(req, res, next) {
+  const name = req.params.name;
+  const updatedAssistant = req.body;
+
+  try {
+    // Buscar el asistente en la base de datos por su nombre
+    const result = await Assistant.findOne({ name });
+
+    // Verificar si se encontró el asistente
+    if (result) {
+      // Actualizar los datos del asistente con los proporcionados en la solicitud
+      result.name = updatedAssistant.name;
+      result.surname = updatedAssistant.surname;
+      result.email = updatedAssistant.email;
+      result.eventId = updatedAssistant.eventId;
+      result.username = updatedAssistant.username;
+
+      // Guardar los cambios en la base de datos
+      await result.save();
+
+      // Enviar un código de estado 204 (Sin Contenido) como respuesta al cliente
+      res.sendStatus(204);
+    } else {
+      // Enviar un código de estado 404 si el asistente no se encuentra
+      res.sendStatus(404);
+    }
+  } catch (e) {
+    // Manejar cualquier error que ocurra durante la actualización
+    debug("DB problem", e);
+    res.sendStatus(500);
+  }
+});
+
+
 
 /* DELETE assistant by Id FUNCIONA*/
 router.delete('/:id', async function(req, res, next) {
   const id = req.params.id;
-  console.log(id);
-
+  
   try {
     const result = await Assistant.findOneAndDelete({ _id: id });
     console.log(result);
     if (result) {
-      console.log("CASI ELIMINADO");
       res.sendStatus(204);
     } else {
       res.sendStatus(404);
     }
   } catch (e) {
-    console.log("ERROR");
     // Manejar cualquier error que ocurra durante la eliminación
     debug("DB problem", e);
     res.sendStatus(500);
@@ -207,6 +239,30 @@ router.get('/email/:email', async function(req, res, next) {
   }
 });
 
+/* DELETE assistant by name */
+router.delete('/name/:name', async function(req, res, next) {
+  const name = req.params.name;
+
+  try {
+    // Buscar el asistente en la base de datos por su nombre
+    const result = await Assistant.findOne({ name });
+
+    // Verificar si se encontró el asistente
+    if (result) {
+      // Eliminar el asistente de la base de datos
+      await result.remove();
+      // Enviar un código de estado 204 (Sin Contenido) como respuesta al cliente
+      res.sendStatus(204);
+    } else {
+      // Enviar un código de estado 404 si el asistente no se encuentra
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    // Manejar errores de manera adecuada
+    console.error('Error al eliminar el asistente por nombre:', error);
+    res.sendStatus(500);
+  }
+});
 
 
 /* DELETE all assistants FUNCIONA*/
