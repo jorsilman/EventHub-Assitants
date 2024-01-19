@@ -114,6 +114,66 @@ describe("Assistant API", () => {
         expect(response.body.error).toBeUndefined();
       });
     });
+    describe("PUT /api/v1/assistants/:id", () => {
+      it("should update an existing assistant by id", async () => {
+        // Crea un asistente para ser actualizado
+        const assistantToUpdate = new assistant({
+          name: "TestAssistant",
+          surname: "TestSurname",
+          email: "prueba@gmail.com",
+          eventId: "1",
+          username: "prueba",
+          code: "a123"
+        });
+    
+        await assistantToUpdate.save();
+    
+        const updatedAssistantData = {
+          name: "UpdatedAssistant",
+          surname: "UpdatedSurname",
+          email: "updated@gmail.com",
+          eventId: "2",
+          username: "updated",
+          code: "a123"
+        };
+    
+        const response = await request(app)
+          .put(`/api/v1/assistants/${assistantToUpdate._id}`)
+          .send(updatedAssistantData);
+    
+        expect(response.status).toBe(204);
+    
+        // Verifica que los datos del asistente realmente se actualizaron en la base de datos
+        const updatedAssistant = await assistant.findById(assistantToUpdate._id);
+        expect(updatedAssistant).not.toBeNull();
+        expect(updatedAssistant.name).toBe("UpdatedAssistant");
+        expect(updatedAssistant.surname).toBe("UpdatedSurname");
+        expect(updatedAssistant.email).toBe("updated@gmail.com");
+        expect(updatedAssistant.eventId).toBe("2");
+        expect(updatedAssistant.username).toBe("updated");
+        expect(updatedAssistant.code).toBe("a123");
+      });
+    
+      it("should return 404 for updating a non-existing assistant by id", async () => {
+        const nonExistingAssistantId = "0000"; // Reemplaza con un ID que no exista
+        const updatedAssistantData = {
+          name: "UpdatedAssistant",
+          surname: "UpdatedSurname",
+          email: "updated@gmail.com",
+          eventId: "2",
+          username: "updated",
+          code: "a123"
+        };
+    
+        const response = await request(app)
+          .put(`/api/v1/assistants/${nonExistingAssistantId}`)
+          .send(updatedAssistantData);
+    
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBeUndefined();
+      });
+    });
+    
     
     describe("DELETE /api/v1/assistants/:id", () => {
       it("should delete an existing assistant by ID", async () => {

@@ -17,36 +17,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-/* POST assistants CON PROMESA*/
-/*
-router.post('/', async function(req, res, next) {
-  const { name, surname, email, eventId } = req.body;
-
-  // Crear una promesa para la llamada a random.org
-
-  const getRandomCode = new Promise(function(resolve, reject) {
-    const url = 'https://api.random.org/json-rpc/4/invoke';
-    const options = {
-      uri: url,
-      method: 'POST',
-      json: {
-        "jsonrpc": "2.0",
-        "method": "generateStrings",
-        "params": {
-          "apiKey": "52ebd838-f349-49d6-98bf-5d28623752d3",
-          "n": 1,
-          "length": 5,
-          "characters": "abcdefghijklmnopqrstuvwxyz0123456789"
-        },
-        "id": 1
-      }
-    };
-
-
-*/
-
-
-
 /* POST assistants FUNCIONA*/
 router.post('/', async function(req, res, next) {
   const { name, surname, email, eventId, username } = req.body;
@@ -136,7 +106,13 @@ router.put('/:id', async function(req, res, next) {
   } catch (e) {
     // Manejar cualquier error que ocurra durante la actualización
     debug("DB problem", e);
-    res.sendStatus(500);
+
+    // Verificar si el error indica que el asistente no fue encontrado
+    if (e.name === "CastError" && e.kind === "ObjectId" && e.path === "_id" && e.value === id) {
+        res.sendStatus(404);  // Enviar código 404 si el ID no fue encontrado
+    } else {
+        res.sendStatus(500);  // Enviar código 500 para otros errores
+    }
   }
 });
 // PUT assistant by Name
@@ -216,28 +192,6 @@ router.get('/event/:eventId', async function(req, res, next) {
   }
 });
 
-/* GET assistant by email FUNCIONA*/
-router.get('/email/:email', async function(req, res, next) {
-  const email = req.params.email;
-
-  try {
-    // Buscar el asistente en la base de datos por su email
-    const result = await Assistant.findOne({ email });
-
-    // Verificar si se encontró el asistente
-    if (result) {
-      // Enviar el asistente como respuesta al cliente
-      res.send(result);
-    } else {
-      // Enviar un código de estado 404 si el asistente no se encuentra
-      res.sendStatus(404);
-    }
-  } catch (e) {
-    // Manejar cualquier error que ocurra durante la búsqueda
-    debug("DB problem", e);
-    res.sendStatus(500);
-  }
-});
 
 /* DELETE assistant by name */
 router.delete('/name/:name', async function(req, res, next) {
@@ -263,25 +217,6 @@ router.delete('/name/:name', async function(req, res, next) {
     res.sendStatus(500);
   }
 });
-
-
-/* DELETE all assistants FUNCIONA*/
-router.delete('/', async function(req, res, next) {
-  try {
-    // Eliminar todos los asistentes de la base de datos
-    await Assistant.deleteMany();
-
-    // Enviar respuesta exitosa al cliente
-    res.sendStatus(200);
-  } catch (error) {
-    // Manejar errores de manera adecuada
-    console.error('Error al eliminar todos los asistentes:', error);
-    res.sendStatus(500);
-  }
-});
-
-module.exports = router;
-
 
 
 module.exports = router;

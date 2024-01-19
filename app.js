@@ -25,7 +25,6 @@ app.use('/api/v1/assistants', assistantsRouter);
 const mongoose = require('mongoose');
 
 const DB_URL = "mongodb+srv://trabajoFIS:FIS2324@assistants-service.gonxlob.mongodb.net/"
-console.log("Connecting: %s", DB_URL);
 mongoose.connect(DB_URL);
 const db = mongoose.connection;
 
