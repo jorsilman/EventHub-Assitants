@@ -7,6 +7,8 @@ var cors = require('cors');
 var indexRouter = require('./routes/index');
 var assistantsRouter = require('./routes/assistants');
 
+const passport = require('./passport');
+
 var app = express();
 
 app.use(logger('dev'));

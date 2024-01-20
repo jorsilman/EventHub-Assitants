@@ -3,6 +3,8 @@ const Assistant = require('../models/assistant');
 var router = express.Router();
 const axios = require('axios');
 
+var passport = require('passport');
+
 
 var debug = require('debug')('contacts-2:server');
 
@@ -18,7 +20,9 @@ router.get('/', async function(req, res, next) {
 });
 
 /* POST assistants FUNCIONA*/
-router.post('/', async function(req, res, next) {
+router.post('/', 
+  passport.authenticate('bearer', { session: false }),  
+  async function(req, res, next) {
   const { name, surname, email, eventId, username } = req.body;
 
    /*code es un string de 5 caracteres alfanuméricos aleatorios*/
@@ -77,7 +81,9 @@ router.get('/:id', async function(req, res, next) {
 });
 
 /* PUT assistant by Id FUNCIONA*/
-router.put('/:id', async function(req, res, next) {
+router.put('/:id',
+  passport.authenticate('bearer', { session: false }),
+  async function(req, res, next) {
   const id = req.params.id;
   const updatedAssistant = req.body;
 
@@ -152,7 +158,9 @@ router.put('/name/:name', async function(req, res, next) {
 
 
 /* DELETE assistant by Id FUNCIONA*/
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:id',
+  passport.authenticate('bearer', { session: false }),
+  async function(req, res, next) {
   const id = req.params.id;
   
   try {
