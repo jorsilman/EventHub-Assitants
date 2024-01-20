@@ -29,8 +29,14 @@ describe("Assistant API", () => {
         eventId: "1",
         username: "prueba",
       };
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
+
       const response = await request(app)
         .post("/api/v1/assistants")
+        .set(authHeader)
         .send(assistantData);
 
       expect(response.status).toBe(201);
@@ -44,8 +50,13 @@ describe("Assistant API", () => {
         username: "prueba",
       };
 
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
       const response = await request(app)
         .post("/api/v1/assistants")
+        .set(authHeader)
         .send(incompleteAssistantData);
 
       expect(response.status).toBe(400);
@@ -77,8 +88,13 @@ describe("Assistant API", () => {
         code: "a123",
       };
 
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
       const response = await request(app)
         .put(`/api/v1/assistants/name/${assistantNameToUpdate}`)
+        .set(authHeader)
         .send(updatedAssistantData);
 
       expect(response.status).toBe(204);
@@ -106,8 +122,13 @@ describe("Assistant API", () => {
         code: "a123",
       };
 
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
       const response = await request(app)
         .put(`/api/v1/assistants/name/${nonExistingAssistantName}`)
+        .set(authHeader)
         .send(updatedAssistantData);
 
       expect(response.status).toBe(404);
@@ -137,8 +158,13 @@ describe("Assistant API", () => {
         code: "a123",
       };
 
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
       const response = await request(app)
         .put(`/api/v1/assistants/${assistantToUpdate._id}`)
+        .set(authHeader)
         .send(updatedAssistantData);
 
       expect(response.status).toBe(204);
@@ -165,8 +191,13 @@ describe("Assistant API", () => {
         code: "a123",
       };
 
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
       const response = await request(app)
         .put(`/api/v1/assistants/${nonExistingAssistantId}`)
+        .set(authHeader)
         .send(updatedAssistantData);
 
       expect(response.status).toBe(404);
@@ -188,9 +219,13 @@ describe("Assistant API", () => {
 
       await assistantToDelete.save();
 
-      const response = await request(app).delete(
-        `/api/v1/assistants/${assistantToDelete._id}`
-      );
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
+      const response = await request(app)
+      .delete(`/api/v1/assistants/${assistantToDelete._id}`)
+      .set(authHeader);
 
       expect(response.status).toBe(204);
 
@@ -204,9 +239,13 @@ describe("Assistant API", () => {
     it("should return 404 for deleting a non-existing assistant by ID", async () => {
       const nonExistingAssistantId = "non-existing-id"; // ID que no existe
 
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
       const response = await request(app).delete(
         `/api/v1/assistants/${nonExistingAssistantId}`
-      );
+      ).set(authHeader);
 
       expect(response.status).toBe(500);
     });
@@ -219,9 +258,13 @@ describe("Assistant API", () => {
 
       const existingAssistantId = "existing-id"; // ID de un asistente existente
 
-      const response = await request(app).delete(
-        `/api/v1/assistants/${existingAssistantId}`
-      );
+      const authHeader = {
+        Authorization: 'Bearer 37f7b2a4-2fdc-4e17-a72b-6570187d3cb6',
+      };
+
+      const response = await request(app)
+      .delete(`/api/v1/assistants/${existingAssistantId}`)
+      .set(authHeader);
 
       expect(response.status).toBe(500);
 
