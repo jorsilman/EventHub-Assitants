@@ -39,6 +39,35 @@ router.post('/',
       username,
       code
     });
+    
+    let eventName, eventPlace, eventDate, eventTime;
+
+    try {
+        //Obtener el evento de la api en la url localhost:4000/api/v2/events/id/:id
+        const event = await axios.get(`http://localhost:4000/api/v1/events/id/${eventId}`);
+        //Obtener el nombre del evento
+        eventName = event.data.name;
+        //Obtener el lugar del evento
+        eventPlace = event.data.place;
+        //Obtener la fecha del evento
+        eventDate = event.data.date;
+        //Obtener la hora del evento
+        eventTime = event.data.time;
+    } catch (error) {
+        console.error('Error al obtener el evento:', error);
+    }
+
+    try {
+        //Enviar una peticion POST a localhost:5000/api/v2/emails con los campos to, subject, text y html
+        await axios.post('http://localhost:5000/api/v2/emails', {
+            to: email,
+            subject: 'Registro en evento',
+            text: `Hola ${name} ${surname}, te has registrado en el evento ${eventName} que se llevará a cabo en ${eventPlace} el día ${eventDate} a las ${eventTime}. Tu código de registro es ${code}.`,
+            html: `<p>Hola ${name} ${surname}, te has registrado en el evento ${eventName} que se llevará a cabo en ${eventPlace} el día ${eventDate} a las ${eventTime}. Tu código de registro es ${code}.</p>`
+        });
+    } catch (error) {
+        console.error('Error al enviar el email:', error);
+    }
 
     // Guardar la instancia del modelo en la base de datos
     await assistant.save();
