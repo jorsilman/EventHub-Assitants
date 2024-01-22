@@ -19,16 +19,50 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+async function getRandomCode() {
+  const url = 'https://api.random.org/json-rpc/4/invoke';
+
+  const options = {
+    method: 'POST',
+    url,
+    data: {
+      jsonrpc: '2.0',
+      method: 'generateStrings',
+      params: {
+        apiKey: '52ebd838-f349-49d6-98bf-5d28623752d3',
+        n: 1,
+        length: 5,
+        characters: 'abcdefghijklmnopqrstuvwxyz0123456789',
+      },
+      id: 1,
+    },
+  };
+
+  // Realiza la petición HTTP usando axios
+  return axios(options);
+}
+
 /* POST assistants FUNCIONA*/
 router.post('/', 
   passport.authenticate('bearer', { session: false }),  
   async function(req, res, next) {
   const { name, surname, email, eventId, username } = req.body;
 
-   /*code es un string de 5 caracteres alfanuméricos aleatorios*/
-  const code = Math.random().toString(36).substring(2, 7);
+  // Utilizar la función getRandomCode para obtener un código aleatorio si falla la petición a la API
+  let code;
+  try {
+    const response = await getRandomCode();
+    code = response.data.result.random.data[0];
+    console.log('Codigo aleatorio API:', code);
+  } catch (error) {
+    console.error('Error al obtener el código aleatorio:', error);
+    code = Math.random().toString(36).substring(2, 7);
+    console.log('Codigo aleatorio:', code);
+  }
 
 
+
+  
   try {
     // Crear una instancia del modelo Assistant con los datos proporcionados
     const assistant = new Assistant({
