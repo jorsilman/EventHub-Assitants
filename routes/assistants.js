@@ -253,8 +253,8 @@ router.get('/event/:eventId', async function(req, res, next) {
       // Si se encuentran asistentes, enviar la respuesta al cliente
       res.send(result);
     } else {
-      // Si no se encuentran asistentes, enviar un código de estado 404
-      res.sendStatus(404);
+      // Si no se encuentran asistentes, enviar un conjunto vacío como respuesta
+      res.send([]);
     }
   } catch (error) {
     // Manejar errores de manera adecuada
